@@ -10,19 +10,11 @@
 - Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
 
 ### Get the repo
-Ask the project owner for the GitHub repo URL, then:
 ```bash
-git clone <REPO_URL>
-cd dmp-prototype
+git clone https://github.com/timreerink-del/Claude-POC.git
+cd Claude-POC/dmp-prototype
 ./setup/team-setup.sh
 ```
-
-> **Note for project owner:** if this is a fresh local repo with no remote yet, create a GitHub repo first, then run:
-> ```bash
-> git remote add origin https://github.com/YOUR_ORG/dmp-prototype.git
-> git push -u origin main
-> ```
-> Share that URL with your team.
 
 ### Figma Access
 Request access to:
