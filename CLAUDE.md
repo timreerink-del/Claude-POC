@@ -3,10 +3,14 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Skills Available
-- **UI/UX Pro Max**: `.claude/skills/ui-ux-pro-max/SKILL.md`
-  Read this before ANY design, UI, or component task.
-  Priority order: Accessibility → Touch → Performance → Style → Layout → Typography → Animation → Forms → Navigation → Charts
-  Run `/ux-check` to audit any screen against all 99 rules.
+Read the relevant SKILL.md before starting any task in that domain.
+
+- **ui-ux-pro-max** `.claude/skills/ui-ux-pro-max/SKILL.md` — 99 UX guidelines, 50+ styles, 161 color palettes, React Native stack rules. Read before ANY design or UI task. Run `/ux-check` to audit a screen.
+- **implement-design** `.claude/skills/implement-design/SKILL.md` — Translating Figma designs to production code with pixel-perfect fidelity.
+- **ui-designer** `.claude/skills/ui-designer/SKILL.md` — Visual design craft, component specs, design tokens, polish & finish.
+- **ux-designer** `.claude/skills/ux-designer/SKILL.md` — UX thinking, user psychology, flows, patterns.
+- **ux-copywriter** `.claude/skills/ux-copywriter/SKILL.md` — Microcopy, button labels, error messages, empty states, CTAs.
+- **canvas-design** `.claude/skills/canvas-design/SKILL.md` — Visual art and image generation in PNG/PDF documents.
 
 ## Rules
 - Run `./scripts/guardian.sh` at the start of every session and fix all errors before starting new work.
