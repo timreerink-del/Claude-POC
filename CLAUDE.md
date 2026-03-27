@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Rules
+- After every approved feature, run: `./scripts/restore-point.sh "[feature-name]"`
+- Never start a new feature without a restore point first.
+- To list all restore points: `./scripts/restore.sh`
+- To restore to a point: `git checkout [tag-name]`
+
 ## Build & Dev Commands
 
 ```bash

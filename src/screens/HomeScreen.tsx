@@ -1098,7 +1098,7 @@ export function HomeScreen() {
       >
         {/* ── HEADER (scrolls away) ── */}
         <View style={styles.header}>
-          <Pressable style={styles.avatar}>
+          <Pressable style={styles.avatar} onPress={() => navigation?.navigate?.('ProfileView')}>
             <Text style={styles.avatarText}>JD</Text>
           </Pressable>
           <Pressable style={styles.headerLeft} onPress={handleGreetingTap}>

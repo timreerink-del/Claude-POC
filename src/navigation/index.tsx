@@ -30,12 +30,14 @@ import { FilterSheet } from '../screens/FilterSheet';
 import { MapViewScreen } from '../screens/MapViewScreen';
 import { LocationSearchScreen } from '../screens/LocationSearchScreen';
 import { EmployerSearchScreen } from '../screens/EmployerSearchScreen';
+import { ProfileScreen } from '../screens/ProfileScreen';
 
 export const ONBOARDING_KEY = '@dmp_onboarding_complete';
 
 export type RootStackParamList = {
   Onboarding: undefined;
   Main: undefined;
+  ProfileView: undefined;
   ShiftDetail: { jobId: string };
   FilterSheet: { selectedLocation?: string; selectedEmployer?: string } | undefined;
   MapView: undefined;
@@ -86,6 +88,16 @@ export function RootNavigator() {
         options={{
           animation: 'fade',
           animationDuration: 400,
+        }}
+      />
+
+      {/* Profile — slides in from right, accessed via avatar */}
+      <Stack.Screen
+        name="ProfileView"
+        component={ProfileScreen}
+        options={{
+          animation: 'slide_from_right',
+          animationDuration: 300,
         }}
       />
 
