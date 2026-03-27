@@ -1,0 +1,25 @@
+{
+  "skills": [
+    ".claude/skills/ui-ux-pro-max/SKILL.md",
+    ".claude/skills/implement-design/SKILL.md",
+    ".claude/skills/ui-designer/SKILL.md",
+    ".claude/skills/ux-designer/SKILL.md",
+    ".claude/skills/ux-copywriter/SKILL.md",
+    ".claude/skills/canvas-design/SKILL.md"
+  ],
+  "rules": [
+    "Always read CLAUDE.md before starting work",
+    "Always read .claude/skills/ui-ux-pro-max/SKILL.md before UI tasks",
+    "Always run ./scripts/guardian.sh before starting",
+    "Always create a restore point before new features",
+    "Figma design is the source of truth",
+    "Use only design tokens — never hardcode values",
+    "Mobile app only — no web patterns",
+    "Minimum touch target: 44px"
+  ],
+  "figma": {
+    "file": "https://www.figma.com/design/amLMUl0QJ1LCFErsiE4hkg/DMP-x-Claude-POC",
+    "design_system_node": "1-5",
+    "components_node": "55-4108"
+  }
+}
