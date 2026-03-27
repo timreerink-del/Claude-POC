@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMP WorkNow — Team Setup Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1f6feb;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #8b949e;
+      font-size: 15px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f0f6fc;
+      margin: 36px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin: 24px 0 10px;
+    }
+
+    p {
+      color: #c9d1d9;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    pre {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      margin: 10px 0 16px;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+      font-size: 13px;
+      color: #e6edf3;
+    }
+
+    p code, li code {
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12px;
+      color: #79c0ff;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 14px;
+    }
+
+    li {
+      color: #c9d1d9;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: #1f6feb;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-body strong {
+      display: block;
+      font-size: 15px;
+      color: #f0f6fc;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 14px;
+    }
+
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #161b22;
+      color: #8b949e;
+      font-weight: 600;
+      border: 1px solid #21262d;
+    }
+
+    td {
+      padding: 8px 12px;
+      border: 1px solid #21262d;
+      color: #c9d1d9;
+      vertical-align: top;
+    }
+
+    td:first-child code { color: #79c0ff; }
+
+    .callout {
+      background: #0d2644;
+      border-left: 3px solid #1f6feb;
+      border-radius: 0 6px 6px 0;
+      padding: 12px 16px;
+      margin: 12px 0 18px;
+      font-size: 14px;
+      color: #8b949e;
+    }
+
+    .callout strong { color: #58a6ff; }
+
+    .url-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-family: 'SF Mono', monospace;
+      color: #58a6ff;
+      margin: 4px 0 12px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="badge">Design Sprint</div>
+    <h1>DMP WorkNow — Team Setup</h1>
+    <p class="subtitle">Get from zero to running prototype in under 10 minutes.</p>
+  </header>
+
+  <!-- WHAT YOU RECEIVE -->
+  <h2>What you receive from the project owner</h2>
+  <table>
+    <tr><th>Item</th><th>How</th></tr>
+    <tr><td>GitHub repo access</td><td>Owner invites you on GitHub</td></tr>
+    <tr><td>Figma file access</td><td>Owner invites you via Figma</td></tr>
+    <tr><td>Figma personal token</td><td>You generate it yourself (step 6)</td></tr>
+    <tr><td>Anthropic account</td><td>Sign up at <a href="https://claude.ai" target="_blank">claude.ai</a> if you don't have one</td></tr>
+  </table>
+
+  <!-- INSTALL -->
+  <h2>Step-by-step setup</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Install Node.js 20 via nvm</strong>
+      <pre><code>nvm install 20 && nvm use 20</code></pre>
+      <p>A <code>.nvmrc</code> file is included in the repo — the correct version will be picked up automatically.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Clone the repo and run the setup script</strong>
+      <pre><code>git clone https://github.com/timreerink-del/Claude-POC.git
+cd Claude-POC/dmp-prototype
+./setup/team-setup.sh</code></pre>
+      <p>The setup script installs npm dependencies, Expo CLI, and Claude Code CLI, then runs a health check.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Install Expo Go on your phone</strong>
+      <p>Download from the App Store or Google Play. Used for testing on a real device.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Sign in to Claude Code</strong>
+      <pre><code>claude login</code></pre>
+      <p>Requires an Anthropic account. Sign up at <a href="https://claude.ai" target="_blank">claude.ai</a> first if needed.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Request Figma access</strong>
+      <p>Ask the project owner to invite you to the Figma file:</p>
+      <div class="url-pill">&#x1F517; <a href="https://www.figma.com/design/amLMUl0QJ1LCFErsiE4hkg/DMP-x-Claude-POC" target="_blank">figma.com/design/amLMUl0QJ1LCFErsiE4hkg/DMP-x-Claude-POC</a></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <strong>Generate your Figma personal access token</strong>
+      <p>Go to your Figma account settings and create a token:</p>
+      <div class="url-pill">&#x1F517; <a href="https://www.figma.com/developers/api#access-tokens" target="_blank">figma.com/developers/api#access-tokens</a></div>
+      <p>Copy it — you'll need it in the next step.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <strong>Install the Figma MCP (Claude Code + Figma bridge)</strong>
+      <pre><code>claude mcp add figma-console -s user \
+  -e FIGMA_ACCESS_TOKEN=figd_YOUR_TOKEN_HERE \
+  -e ENABLE_MCP_APPS=true \
+  -- npx -y figma-console-mcp@latest</code></pre>
+      <p>Replace <code>figd_YOUR_TOKEN_HERE</code> with your token from step 6.</p>
+    </div>
+  </div>
+
+  <!-- DAILY WORKFLOW -->
+  <h2>Daily workflow</h2>
+  <ol>
+    <li>Pull latest: <code>git pull</code></li>
+    <li>Run guardian: <code>./scripts/guardian.sh</code></li>
+    <li>Create restore point before new work: <code>./scripts/restore-point.sh "your-feature-name"</code></li>
+    <li>Build your feature</li>
+    <li>Run guardian again: <code>./scripts/guardian.sh</code></li>
+    <li>Create final restore point: <code>./scripts/restore-point.sh "your-feature-name-complete"</code></li>
+    <li>Push: <code>git push</code></li>
+  </ol>
+
+  <!-- DESIGN RULES -->
+  <h2>Design rules</h2>
+  <ul>
+    <li>Figma is always the source of truth</li>
+    <li>Use only design tokens — no hardcoded hex values</li>
+    <li>Read <code>CLAUDE.md</code> before starting any Claude Code session</li>
+    <li>Read <code>.claude/skills/ui-ux-pro-max/SKILL.md</code> before any UI work</li>
+  </ul>
+
+  <!-- KEY COMMANDS -->
+  <h2>Key commands</h2>
+  <table>
+    <tr><th>Command</th><th>Purpose</th></tr>
+    <tr><td><code>npm run web</code></td><td>Start web dev server</td></tr>
+    <tr><td><code>npx expo start</code></td><td>Start Expo dev server (native)</td></tr>
+    <tr><td><code>./scripts/guardian.sh</code></td><td>Health check</td></tr>
+    <tr><td><code>./scripts/restore-point.sh "name"</code></td><td>Create restore point</td></tr>
+    <tr><td><code>./scripts/restore.sh</code></td><td>List all restore points</td></tr>
+    <tr><td><code>npx expo export --platform web && vercel deploy --prod --yes dist</code></td><td>Deploy to Vercel</td></tr>
+  </table>
+
+  <!-- LIVE LINKS -->
+  <h2>Live links</h2>
+  <table>
+    <tr><th>Resource</th><th>URL</th></tr>
+    <tr><td>Prototype (Vercel)</td><td><a href="https://dist-eight-sigma-60.vercel.app/" target="_blank">dist-eight-sigma-60.vercel.app</a></td></tr>
+    <tr><td>GitHub repo</td><td><a href="https://github.com/timreerink-del/Claude-POC" target="_blank">github.com/timreerink-del/Claude-POC</a></td></tr>
+    <tr><td>Figma file</td><td><a href="https://www.figma.com/design/amLMUl0QJ1LCFErsiE4hkg/DMP-x-Claude-POC" target="_blank">DMP-x-Claude-POC</a></td></tr>
+  </table>
+
+</div>
+</body>
+</html>
