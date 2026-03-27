@@ -32,12 +32,12 @@ if ! command -v expo &> /dev/null; then
 fi
 echo "✅ Expo CLI ready"
 
-# Check EAS CLI
-if ! command -v eas &> /dev/null; then
-  echo "Installing EAS CLI..."
-  npm install -g eas-cli
+# Check Claude Code
+if ! command -v claude &> /dev/null; then
+  echo "Installing Claude Code..."
+  npm install -g @anthropic-ai/claude-code
 fi
-echo "✅ EAS CLI ready"
+echo "✅ Claude Code ready"
 
 # Run guardian check
 echo ""

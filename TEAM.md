@@ -3,21 +3,37 @@
 ## Quick Start (< 10 minutes)
 
 ### Prerequisites
-- Node.js 18+ (https://nodejs.org)
+- Node.js 20 (use `nvm install 20 && nvm use 20` — a `.nvmrc` file is included)
 - Git
 - Expo Go app on your phone (for testing)
 - Figma account with access to the DMP POC file
+- Claude Code CLI (`npm install -g @anthropic-ai/claude-code`)
 
-### Installation
+### Get the repo
+Ask the project owner for the GitHub repo URL, then:
 ```bash
-git clone [REPO_URL]
+git clone <REPO_URL>
 cd dmp-prototype
 ./setup/team-setup.sh
 ```
 
+> **Note for project owner:** if this is a fresh local repo with no remote yet, create a GitHub repo first, then run:
+> ```bash
+> git remote add origin https://github.com/YOUR_ORG/dmp-prototype.git
+> git push -u origin main
+> ```
+> Share that URL with your team.
+
 ### Figma Access
 Request access to:
 https://www.figma.com/design/amLMUl0QJ1LCFErsiE4hkg/DMP-x-Claude-POC
+
+### Claude Code Setup
+Claude Code is the AI coding assistant used on this project. Install it and sign in:
+```bash
+npm install -g @anthropic-ai/claude-code
+claude login
+```
 
 ### MCP Setup (Figma + Claude Code)
 Install the Southleft Figma Console MCP:
