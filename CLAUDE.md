@@ -3,6 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Rules
+- Run `./scripts/guardian.sh` at the start of every session and fix all errors before starting new work.
 - After every approved feature, run: `./scripts/restore-point.sh "[feature-name]"`
 - Never start a new feature without a restore point first.
 - To list all restore points: `./scripts/restore.sh`
