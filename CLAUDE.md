@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Skills Available
+- **UI/UX Pro Max**: `.claude/skills/ui-ux-pro-max/SKILL.md`
+  Read this before ANY design, UI, or component task.
+  Priority order: Accessibility → Touch → Performance → Style → Layout → Typography → Animation → Forms → Navigation → Charts
+  Run `/ux-check` to audit any screen against all 99 rules.
+
 ## Rules
 - Run `./scripts/guardian.sh` at the start of every session and fix all errors before starting new work.
 - After every approved feature, run: `./scripts/restore-point.sh "[feature-name]"`
