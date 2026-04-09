@@ -5,6 +5,8 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
+  Image,
+  ImageSourcePropType,
   NativeSyntheticEvent,
   NativeScrollEvent,
   LayoutChangeEvent,
@@ -27,8 +29,9 @@ import { JobCard } from '../components/features/JobCard';
 import { EngagementCard } from '../components/features/EngagementCard';
 import { DateSelectorFilter } from '../components/features/DateSelectorFilter';
 import { Icon, Button } from '../components/ui';
-import { MeshGradient } from '../components/ui/MeshGradient';
-import { colors, fontFamilies, typeScale, typography, spacing, radius, sizes } from '../tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import { TimeGradient } from '../components/ui/TimeGradient';
+import { colors, fontFamilies, typeScale, typography, spacing, radius, sizes, shadows } from '../tokens';
 import {
   WORK_NOW_JOBS,
   VACANCY_JOBS,
@@ -41,6 +44,7 @@ import { ENGAGEMENT_CARDS } from '../data/engagementCards';
 type JobType = 'work-now' | 'vacancies';
 
 // ── Job Type Toggle ──────────────────────────────────────
+// V4 Mesh style: pill container, navy fill for active tab
 
 function JobTypeToggle({
   value,
@@ -49,57 +53,27 @@ function JobTypeToggle({
   value: JobType;
   onChange: (v: JobType) => void;
 }) {
-  const indicatorX = useSharedValue(value === 'work-now' ? 0 : 1);
-
-  const indicatorStyle = useAnimatedStyle(() => ({
-    left: `${indicatorX.value * 50}%` as any,
-  }));
-
-  const handleToggle = (newValue: JobType) => {
-    indicatorX.value = withSpring(newValue === 'work-now' ? 0 : 1, {
-      stiffness: 300,
-      damping: 25,
-    });
-    onChange(newValue);
-  };
-
   return (
     <View style={toggleStyles.container}>
       <Pressable
         testID="toggle-work-now"
-        style={toggleStyles.tab}
-        onPress={() => handleToggle('work-now')}
+        style={[toggleStyles.tab, value === 'work-now' && toggleStyles.tabActive]}
+        onPress={() => onChange('work-now')}
       >
-        <View style={toggleStyles.labelRow}>
-          <Icon name="zap" size={16} color={value === 'work-now' ? colors.primaryContrast : colors.textMuted} />
-          <Text
-            style={[
-              toggleStyles.label,
-              value === 'work-now' ? toggleStyles.labelActive : toggleStyles.labelInactive,
-            ]}
-          >
-            work now
-          </Text>
-        </View>
-        <View style={value === 'work-now' ? toggleStyles.activeIndicator : toggleStyles.inactiveIndicator} />
+        <Icon name="briefcase" size={16} color={value === 'work-now' ? colors.white : colors.textMuted} />
+        <Text style={[toggleStyles.label, value === 'work-now' ? toggleStyles.labelActive : toggleStyles.labelInactive]}>
+          Diensten
+        </Text>
       </Pressable>
       <Pressable
         testID="toggle-vacancies"
-        style={toggleStyles.tab}
-        onPress={() => handleToggle('vacancies')}
+        style={[toggleStyles.tab, value === 'vacancies' && toggleStyles.tabActive]}
+        onPress={() => onChange('vacancies')}
       >
-        <View style={toggleStyles.labelRow}>
-          <Icon name="bookmark" size={16} color={value === 'vacancies' ? colors.primaryContrast : colors.textMuted} />
-          <Text
-            style={[
-              toggleStyles.label,
-              value === 'vacancies' ? toggleStyles.labelActive : toggleStyles.labelInactive,
-            ]}
-          >
-            vacancies
-          </Text>
-        </View>
-        <View style={value === 'vacancies' ? toggleStyles.activeIndicator : toggleStyles.inactiveIndicator} />
+        <Icon name="file-text" size={16} color={value === 'vacancies' ? colors.white : colors.textMuted} />
+        <Text style={[toggleStyles.label, value === 'vacancies' ? toggleStyles.labelActive : toggleStyles.labelInactive]}>
+          Vacatures
+        </Text>
       </Pressable>
     </View>
   );
@@ -108,41 +82,37 @@ function JobTypeToggle({
 const toggleStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 48,
+    marginHorizontal: spacing.m,
+    marginBottom: spacing.s,
+    backgroundColor: colors.card,
+    borderRadius: radius.pill,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: colors.input,
+    gap: 2,
+    ...shadows.card,
   },
   tab: {
     flex: 1,
+    height: 36,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  labelRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    flex: 1,
+    gap: 6,
+  },
+  tabActive: {
+    backgroundColor: colors.primaryContrast,
   },
   label: {
     fontFamily: fontFamilies.semibold,
-    fontSize: typeScale.base.fontSize,
-    lineHeight: typeScale.base.lineHeight,
+    fontSize: typeScale.sm.fontSize,
   },
   labelActive: {
-    color: colors.primaryContrast,
+    color: colors.white,
   },
   labelInactive: {
     color: colors.textMuted,
-  },
-  activeIndicator: {
-    width: '100%',
-    height: 3,
-    backgroundColor: colors.primaryContrast,
-    borderRadius: radius.pill,
-  },
-  inactiveIndicator: {
-    width: '100%',
-    height: 1,
-    backgroundColor: colors.border,
   },
 });
 
@@ -962,6 +932,427 @@ const fStyles = StyleSheet.create({
   },
 });
 
+// ── V4 Mesh Background (shared by CTA + gamification cards) ─
+
+function MeshCardBg() {
+  return (
+    <>
+      <View style={{ position: 'absolute', top: -24, left: -24, width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(214,228,255,0.85)' }} />
+      <View style={{ position: 'absolute', bottom: -24, right: -24, width: 130, height: 130, borderRadius: 65, backgroundColor: 'rgba(235,224,255,0.80)' }} />
+      <View style={{ position: 'absolute', top: '20%', left: '52%', width: 110, height: 110, borderRadius: 55, backgroundColor: 'rgba(255,214,231,0.45)' }} />
+    </>
+  );
+}
+
+// ── Hero Card (320×220 photo card for "Picked for you") ──
+
+function HeroCard({
+  title,
+  company,
+  time,
+  hourlyRate,
+  dateLabel,
+  image,
+  isBookmarked = false,
+  onPress,
+  onBookmark,
+}: {
+  title: string;
+  company: string;
+  time?: string;
+  hourlyRate: string;
+  dateLabel?: string;
+  image?: ImageSourcePropType;
+  isBookmarked?: boolean;
+  onPress?: () => void;
+  onBookmark?: () => void;
+}) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Animated.View style={animStyle}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => { scale.value = withSpring(0.97, { damping: 15, stiffness: 400 }); }}
+        onPressOut={() => { scale.value = withSpring(1, { damping: 12, stiffness: 200 }); }}
+        style={heroCardStyles.card}
+      >
+        {/* Photo — wrapped in a sized View because RN Web's Image
+            ignores StyleSheet.absoluteFillObject for require()'d assets
+            and would otherwise render at the source's natural dimensions. */}
+        {image ? (
+          <View style={StyleSheet.absoluteFillObject}>
+            <Image source={image} style={heroCardStyles.photo} resizeMode="cover" />
+          </View>
+        ) : (
+          <View style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.primaryContrast }]} />
+        )}
+
+        {/* Scrim */}
+        <LinearGradient
+          colors={['rgba(5,10,22,0.55)', 'rgba(5,10,22,0.08)', 'rgba(5,10,22,0.82)']}
+          locations={[0, 0.38, 1]}
+          style={StyleSheet.absoluteFillObject}
+        />
+
+        {/* Employer badge — top left */}
+        <View style={[heroCardStyles.glassChip, heroCardStyles.employerBadge]}>
+          <Text style={heroCardStyles.glassChipText}>{company}</Text>
+        </View>
+
+        {/* Heart — top right */}
+        <Pressable
+          style={heroCardStyles.heartBtn}
+          onPress={(e) => { e.stopPropagation?.(); onBookmark?.(); }}
+          hitSlop={8}
+        >
+          <Icon name="heart" size={16} color={isBookmarked ? '#FF6B9D' : colors.white} />
+        </Pressable>
+
+        {/* Bottom */}
+        <View style={heroCardStyles.bottom}>
+          <Text style={heroCardStyles.title} numberOfLines={1}>{title}</Text>
+          <View style={heroCardStyles.metaRow}>
+            <View style={heroCardStyles.pills}>
+              {time && (
+                <View style={heroCardStyles.glassChip}>
+                  <Text style={heroCardStyles.glassChipText}>{time}</Text>
+                </View>
+              )}
+              {dateLabel && (
+                <View style={heroCardStyles.glassChip}>
+                  <Text style={heroCardStyles.glassChipText}>{dateLabel}</Text>
+                </View>
+              )}
+              <View style={heroCardStyles.glassChip}>
+                <Text style={heroCardStyles.glassChipText}>{hourlyRate.replace(' / hour', '/u')}</Text>
+              </View>
+            </View>
+            <Pressable style={heroCardStyles.applyBtn} onPress={onPress}>
+              <Text style={heroCardStyles.applyBtnText}>Aanvragen</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+const heroCardStyles = StyleSheet.create({
+  card: {
+    width: 320,
+    height: 220,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    position: 'relative',
+    ...shadows.modal,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+  },
+  glassChip: {
+    backgroundColor: 'rgba(10,10,20,0.52)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.16)',
+    borderRadius: radius.s,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    ...(Platform.OS === 'web' ? ({ backdropFilter: 'blur(10px)' } as any) : {}),
+  },
+  employerBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+  },
+  glassChipText: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.92)',
+  },
+  heartBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(10,10,20,0.45)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...(Platform.OS === 'web' ? ({ backdropFilter: 'blur(8px)' } as any) : {}),
+  },
+  bottom: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    right: 12,
+  },
+  title: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale.lg.fontSize,
+    lineHeight: typeScale.lg.lineHeight,
+    color: colors.white,
+    marginBottom: 8,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  pills: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 5,
+  },
+  applyBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.pill,
+    height: 32,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  applyBtnText: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: 12,
+    color: colors.white,
+  },
+});
+
+// ── Registration CTA Card (mesh gradient) ───────────────
+
+function CtaCard({ onPress }: { onPress?: () => void }) {
+  return (
+    <Pressable style={ctaCardStyles.card} onPress={onPress}>
+      <MeshCardBg />
+      <View style={ctaCardStyles.content}>
+        <Text style={ctaCardStyles.tag}>AAN DE SLAG</Text>
+        <Text style={ctaCardStyles.title}>Maak je profiel compleet</Text>
+        <Text style={ctaCardStyles.sub}>Voeg je CV toe voor betere matches</Text>
+        <View style={ctaCardStyles.btn}>
+          <Text style={ctaCardStyles.btnText}>Start nu →</Text>
+        </View>
+      </View>
+      <Image
+        source={require('../../assets/illustrations/rocket.png')}
+        style={ctaCardStyles.illustration}
+        resizeMode="contain"
+      />
+    </Pressable>
+  );
+}
+
+const ctaCardStyles = StyleSheet.create({
+  card: {
+    marginHorizontal: spacing.m,
+    marginBottom: spacing.m,
+    borderRadius: radius.l,
+    overflow: 'hidden',
+    height: 140,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.l,
+    borderWidth: 1,
+    borderColor: 'rgba(10,42,87,0.08)',
+    backgroundColor: colors.background,
+    position: 'relative',
+    ...shadows.card,
+  },
+  content: {
+    flex: 1,
+    paddingRight: 88,
+  },
+  tag: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: 10,
+    letterSpacing: 0.8,
+    color: 'rgba(10,42,87,0.60)',
+    marginBottom: 2,
+  },
+  title: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale.lg.fontSize,
+    lineHeight: typeScale.lg.lineHeight,
+    color: colors.primaryContrast,
+    marginBottom: 3,
+  },
+  sub: {
+    fontFamily: fontFamilies.regular,
+    fontSize: 12,
+    color: 'rgba(10,42,87,0.65)',
+    marginBottom: 10,
+  },
+  btn: {
+    backgroundColor: colors.primaryContrast,
+    borderRadius: radius.pill,
+    height: 32,
+    paddingHorizontal: 14,
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnText: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: 11,
+    color: colors.white,
+  },
+  illustration: {
+    position: 'absolute',
+    right: 8,
+    bottom: 0,
+    width: 90,
+    height: 90,
+  },
+});
+
+// ── Gamification Card (mesh gradient) ───────────────────
+
+function GamificationCard() {
+  return (
+    <View style={gamifStyles.card}>
+      <MeshCardBg />
+      <View style={gamifStyles.iconWrap}>
+        <Icon name="award" size={20} color={colors.primaryContrast} />
+      </View>
+      <View style={gamifStyles.text}>
+        <Text style={gamifStyles.title}>Eerste dienst voltooid!</Text>
+        <Text style={gamifStyles.sub}>Je hebt je eerste badge verdiend</Text>
+      </View>
+      <View style={gamifStyles.ptsBadge}>
+        <Text style={gamifStyles.ptsBadgeText}>+50 pts</Text>
+      </View>
+    </View>
+  );
+}
+
+const gamifStyles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginHorizontal: spacing.m,
+    marginBottom: spacing.m,
+    borderRadius: radius.l,
+    paddingHorizontal: spacing.l,
+    height: 96,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(10,42,87,0.08)',
+    backgroundColor: colors.background,
+    position: 'relative',
+    ...shadows.card,
+  },
+  iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.m,
+    backgroundColor: 'rgba(10,42,87,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(10,42,87,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  text: { flex: 1 },
+  title: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale.base.fontSize,
+    color: colors.primaryContrast,
+    marginBottom: 3,
+  },
+  sub: {
+    fontFamily: fontFamilies.regular,
+    fontSize: 12,
+    color: 'rgba(10,42,87,0.65)',
+  },
+  ptsBadge: {
+    backgroundColor: 'rgba(10,42,87,0.10)',
+    borderRadius: radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(10,42,87,0.15)',
+    flexShrink: 0,
+  },
+  ptsBadgeText: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: 11,
+    color: colors.primaryContrast,
+  },
+});
+
+// ── Featured Employer Card (mesh gradient) ───────────────
+
+const EMPLOYERS = [
+  { name: 'KLM',     monogram: 'KLM', roles: 12 },
+  { name: 'Schiphol', monogram: 'SCH', roles: 8  },
+  { name: 'DHL',     monogram: 'DHL', roles: 21 },
+  { name: 'Bol.com', monogram: 'BOL', roles: 15 },
+  { name: 'NS',      monogram: 'NS',  roles: 6  },
+];
+
+function EmployerCard({ name, monogram, roles }: { name: string; monogram: string; roles: number }) {
+  return (
+    <View style={empStyles.card}>
+      {/* amplified mesh */}
+      <View style={{ position: 'absolute', top: -16, left: -16, width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(214,228,255,0.95)' }} />
+      <View style={{ position: 'absolute', bottom: -16, right: -16, width: 90,  height: 90,  borderRadius: 45, backgroundColor: 'rgba(235,224,255,0.90)' }} />
+      <View style={{ position: 'absolute', top: '30%', left: '50%', width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,214,231,0.60)' }} />
+      <Text style={empStyles.monogram} numberOfLines={1}>{monogram}</Text>
+      <Text style={empStyles.name}>{name}</Text>
+      <Text style={empStyles.roles}>{roles} open rollen</Text>
+    </View>
+  );
+}
+
+const empStyles = StyleSheet.create({
+  card: {
+    width: 160,
+    height: 100,
+    borderRadius: radius.l,
+    padding: 14,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    borderWidth: 1,
+    borderColor: 'rgba(10,42,87,0.10)',
+    backgroundColor: '#F4F1FA',
+    position: 'relative',
+    flexShrink: 0,
+    ...shadows.card,
+  },
+  monogram: {
+    position: 'absolute',
+    right: -4,
+    top: 14,
+    fontSize: 44,
+    fontFamily: fontFamilies.semibold,
+    color: 'rgba(10,42,87,0.07)',
+    lineHeight: 44,
+  },
+  name: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale.sm.fontSize,
+    color: colors.primaryContrast,
+    marginBottom: 3,
+    position: 'relative',
+    zIndex: 1,
+  },
+  roles: {
+    fontFamily: fontFamilies.regular,
+    fontSize: 11,
+    color: 'rgba(10,42,87,0.55)',
+    position: 'relative',
+    zIndex: 1,
+  },
+});
+
 // ── Main Screen ──────────────────────────────────────────
 
 export function HomeScreen() {
@@ -1001,7 +1392,6 @@ export function HomeScreen() {
     }
   }, []);
 
-  const { height: screenHeight } = useWindowDimensions();
   const [searchSticky, setSearchSticky] = useState(false);
   const [dateFilterSticky, setDateFilterSticky] = useState(false);
   const searchRowY = useRef(0);
@@ -1063,27 +1453,23 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      {/* ── MESH GRADIENT — absolute overlay, top 30% ── */}
-      <MeshGradient height={screenHeight * 0.30} />
+      {/* ── TIME GRADIENT — aurora arcs, top 160px ── */}
+      <TimeGradient />
 
-      {/* ── STICKY SEARCH (appears when inline search scrolls away) ── */}
+      {/* ── STICKY SEARCH BAR ── */}
       {searchSticky && (
         <View style={styles.stickySearchContainer}>
           <View style={styles.stickySearchRow}>
-            <Pressable style={styles.searchInputWrap}>
-              <Icon name="search" size={20} color={colors.textMuted} />
-              <Text style={styles.searchPlaceholder}>Search Job...</Text>
-            </Pressable>
-            <Pressable style={styles.filterIconBtn} onPress={() => setFilterVisible(true)}>
-              <Icon name="sliders" size={20} color={colors.primaryContrast} />
+            <Pressable style={styles.searchInputWrap} onPress={() => setFilterVisible(true)}>
+              <Icon name="search" size={20} color={colors.primary} />
+              <Text style={styles.searchPlaceholder}>Zoek diensten, functies...</Text>
+              <View style={styles.filterBadge}>
+                <Text style={styles.filterBadgeText}>Filters</Text>
+              </View>
             </Pressable>
           </View>
-          {/* ── STICKY DATE FILTER (stacks below sticky search) ── */}
           {dateFilterSticky && jobType === 'work-now' && (
-            <DateSelectorFilter
-              selectedDate={selectedDate}
-              onDateSelect={setSelectedDate}
-            />
+            <DateSelectorFilter selectedDate={selectedDate} onDateSelect={setSelectedDate} />
           )}
         </View>
       )}
@@ -1096,223 +1482,190 @@ export function HomeScreen() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {/* ── HEADER (scrolls away) ── */}
-        <View style={styles.header}>
-          <Pressable style={styles.avatar} onPress={() => navigation?.navigate?.('ProfileView')}>
-            <Text style={styles.avatarText}>JD</Text>
-          </Pressable>
-          <Pressable style={styles.headerLeft} onPress={handleGreetingTap}>
-            <Text style={styles.greeting}>Good morning</Text>
-            <Text style={styles.subtitle}>Find your next shift</Text>
-          </Pressable>
-          <Pressable style={styles.notificationBtn} hitSlop={8}>
-            <Text style={{ fontFamily: 'feather', fontSize: 24, color: colors.foreground }}>{String.fromCharCode(61726)}</Text>
-            <View style={styles.notificationDot} />
+        {/* ── HEADER ── */}
+        <Pressable style={styles.header} onPress={handleGreetingTap}>
+          <View style={styles.headerGreeting}>
+            <Text style={styles.salute}>Goedemiddag,</Text>
+            <Text style={styles.greeting}>Thomas</Text>
+          </View>
+          <View style={styles.headerActions}>
+            <Pressable style={styles.iconBtn} hitSlop={8}>
+              <Text style={{ fontFamily: 'feather', fontSize: 20, color: colors.primaryContrast }}>{String.fromCharCode(61726)}</Text>
+              <View style={styles.notificationDot} />
+            </Pressable>
+            <Pressable style={styles.iconBtn} onPress={() => setFilterVisible(true)} hitSlop={8}>
+              <Icon name="sliders" size={20} color={colors.primaryContrast} />
+            </Pressable>
+          </View>
+        </Pressable>
+
+        {/* ── SEARCH BAR (scrolls, then sticks) ── */}
+        <View style={styles.searchRow} onLayout={onSearchRowLayout}>
+          <Pressable style={styles.searchInputWrap} onPress={() => setFilterVisible(true)}>
+            <Icon name="search" size={20} color={colors.primary} />
+            <Text style={styles.searchPlaceholder}>Zoek diensten, functies...</Text>
+            <View style={styles.filterBadge}>
+              <Text style={styles.filterBadgeText}>Filters</Text>
+            </View>
           </Pressable>
         </View>
 
-        {/* ── TAB TOGGLE (scrolls with header) ── */}
+        {/* ── TOGGLE ── */}
         <JobTypeToggle value={jobType} onChange={setJobType} />
 
-        {/* ── SEARCH + FILTER (scrolls, then sticks) ── */}
-        <View style={styles.searchRow} onLayout={onSearchRowLayout}>
-          <Pressable style={styles.searchInputWrap}>
-            <Icon name="search" size={20} color={colors.textMuted} />
-            <Text style={styles.searchPlaceholder}>Search Job...</Text>
-          </Pressable>
-          <Pressable style={styles.filterIconBtn} onPress={() => setFilterVisible(true)}>
-            <Icon name="sliders" size={20} color={colors.primaryContrast} />
-          </Pressable>
-        </View>
-
-        {/* ── SECTION 4: PICKED FOR YOU CAROUSEL ── */}
+        {/* ── PICKED FOR YOU ── */}
         <View onLayout={onCarouselLayout}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Picked for you</Text>
-            <Pressable>
-              <Text style={styles.seeAll}>See all</Text>
-            </Pressable>
+            <Pressable><Text style={styles.seeAll}>Alles zien</Text></Pressable>
           </View>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.carouselContent}
-            snapToInterval={280 + 12}
+            snapToInterval={320 + 12}
             snapToAlignment="start"
             decelerationRate="fast"
             onScroll={(e) => {
-              const offset = e.nativeEvent.contentOffset.x;
-              const idx = Math.round(offset / (280 + 12));
-              setActiveCarouselIndex(idx);
+              setActiveCarouselIndex(Math.round(e.nativeEvent.contentOffset.x / (320 + 12)));
             }}
             scrollEventThrottle={16}
           >
-            {PICKED_FOR_YOU.map((job, index) => (
-              <JobCard
+            {PICKED_FOR_YOU.map((job) => (
+              <HeroCard
                 key={job.id}
-                variant="photo"
                 title={job.title}
                 company={job.company}
-                location={job.distance}
                 time={job.time}
                 hourlyRate={job.hourlyRate}
-                rating={job.rating}
-                reviewCount={job.reviewCount}
-                image={job.image}
-                video={job.video}
-                isActive={index === activeCarouselIndex}
                 dateLabel={job.dateLabel}
+                image={job.image}
+                isBookmarked={bookmarks[job.id] ?? job.isBookmarked}
                 onPress={() => handleJobPress(job.id)}
+                onBookmark={() => toggleBookmark(job.id)}
               />
             ))}
           </ScrollView>
-        </View>
 
-        {/* ── Divider ── */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-        </View>
-
-        {/* ── Count Row ── */}
-        <View style={styles.countRow}>
-          <Text style={styles.countLabel}>
-            {jobType === 'work-now' ? 'Open shifts' : 'Vacancies'}
-          </Text>
-          <View style={styles.countActions}>
-            <Pressable
-              style={styles.mapBtn}
-              hitSlop={8}
-              onPress={() => navigation?.navigate?.('MapView')}
-            >
-              <Icon name="map" size={20} color={colors.primaryContrast} />
-            </Pressable>
+          {/* Pagination dots */}
+          <View style={styles.dots}>
+            {PICKED_FOR_YOU.map((_, i) => (
+              <View key={i} style={i === activeCarouselIndex ? styles.dotActive : styles.dotInactive} />
+            ))}
           </View>
         </View>
 
-        {/* ── SECTION 5: DATE SELECTOR (inline, work-now only) ── */}
+        {/* ── REGISTRATION CTA CARD ── */}
+        <CtaCard onPress={() => navigation?.navigate?.('ProfileView')} />
+
+        {/* ── OPEN SHIFTS HEADER ── */}
+        <View style={styles.countRow}>
+          <Text style={styles.countLabel}>
+            {jobType === 'work-now' ? 'Open shifts' : 'Vacatures'}
+          </Text>
+          <Pressable style={styles.mapBtn} hitSlop={8} onPress={() => navigation?.navigate?.('MapView')}>
+            <Icon name="map" size={20} color={colors.primaryContrast} />
+          </Pressable>
+        </View>
+
+        {/* ── DATE SELECTOR ── */}
         {jobType === 'work-now' && !dateFilterSticky && (
-          <Animated.View
-            entering={FadeIn.duration(150)}
-            exiting={FadeOut.duration(150)}
-          >
-            <DateSelectorFilter
-              selectedDate={selectedDate}
-              onDateSelect={setSelectedDate}
-            />
+          <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(150)}>
+            <DateSelectorFilter selectedDate={selectedDate} onDateSelect={setSelectedDate} />
           </Animated.View>
         )}
 
-        {/* ── SECTION 6: JOB FEED ── */}
+        {/* ── JOB FEED ── */}
         {jobType === 'work-now' ? (
-          <Animated.View
-            key="work-now-feed"
-            entering={FadeIn.duration(150)}
-            style={styles.feedContainer}
-          >
+          <Animated.View key="work-now-feed" entering={FadeIn.duration(150)} style={styles.feedContainer}>
             {workNowJobs.map((job, index) => (
-            <React.Fragment key={job.id}>
-              <Animated.View
-                entering={FadeIn.delay(Math.min(index, 5) * 50).duration(150)}
-                style={index > 0 ? styles.cardGap : undefined}
-              >
-                <JobCard
-                  variant="compact"
-                  title={job.title}
-                  company={job.company}
-                  location={job.distance}
-                  time={job.time}
-                  hourlyRate={job.hourlyRate}
-                  rating={job.rating}
-                  reviewCount={job.reviewCount}
-                  image={job.image}
-                  isBookmarked={bookmarks[job.id] ?? job.isBookmarked}
-                  onBookmark={() => toggleBookmark(job.id)}
-                  onPress={() => handleJobPress(job.id)}
-                />
-              </Animated.View>
-              {/* EngagementCard after the 5th card */}
-              {index === 4 && currentEngagement && (
-                <View key={`engagement-wn-${currentEngagement.id}`} style={styles.cardGap}>
-                  <EngagementCard
-                    data={currentEngagement}
-                    onDismiss={() => setEngagementIndex((i) => i + 1)}
+              <React.Fragment key={job.id}>
+                <Animated.View
+                  entering={FadeIn.delay(Math.min(index, 5) * 50).duration(150)}
+                  style={index > 0 ? styles.cardGap : undefined}
+                >
+                  <JobCard
+                    variant="horizontal"
+                    title={job.title}
+                    company={job.company}
+                    location={job.distance}
+                    time={job.time}
+                    hourlyRate={job.hourlyRate}
+                    rating={job.rating}
+                    reviewCount={job.reviewCount}
+                    image={job.image}
+                    isBookmarked={bookmarks[job.id] ?? job.isBookmarked}
+                    onBookmark={() => toggleBookmark(job.id)}
+                    onPress={() => handleJobPress(job.id)}
                   />
-                </View>
-              )}
-            </React.Fragment>
+                </Animated.View>
+                {/* Gamification card after 4th shift */}
+                {index === 3 && (
+                  <View style={styles.cardGap}>
+                    <GamificationCard />
+                  </View>
+                )}
+              </React.Fragment>
             ))}
-            {/* See more button */}
             {hasMoreWorkNow && (
-              <Pressable
-                style={styles.seeMoreBtn}
-                onPress={() => setVisibleWorkNowCount((c) => c + 10)}
-              >
-                <Text style={styles.seeMoreText}>
-                  See {Math.min(remainingWorkNow, 10)} more jobs
-                </Text>
+              <Pressable style={styles.seeMoreBtn} onPress={() => setVisibleWorkNowCount((c) => c + 10)}>
+                <Text style={styles.seeMoreText}>show {Math.min(remainingWorkNow, 10)} more results</Text>
               </Pressable>
             )}
           </Animated.View>
         ) : (
-          <Animated.View
-            key="vacancies-feed"
-            entering={FadeIn.duration(150)}
-            style={styles.feedContainer}
-          >
+          <Animated.View key="vacancies-feed" entering={FadeIn.duration(150)} style={styles.feedContainer}>
             {vacancyJobs.map((job, index) => (
-            <React.Fragment key={job.id}>
-              <Animated.View
-                entering={FadeIn.delay(Math.min(index, 5) * 50).duration(150)}
-                style={index > 0 ? styles.cardGap : undefined}
-              >
-                <JobCard
-                  variant="compact"
-                  title={job.title}
-                  company={job.company}
-                  location={job.distance}
-                  hourlyRate={job.salary}
-                  rating={job.rating}
-                  reviewCount={job.reviewCount}
-                  image={job.image}
-                  isBookmarked={bookmarks[job.id] ?? job.isBookmarked}
-                  onBookmark={() => toggleBookmark(job.id)}
-                  onPress={() => handleJobPress(job.id)}
-                  badge={job.contractType}
-                />
-              </Animated.View>
-              {/* EngagementCard after the 5th card */}
-              {index === 4 && currentEngagement && (
-                <View key={`engagement-vc-${currentEngagement.id}`} style={styles.cardGap}>
-                  <EngagementCard
-                    data={currentEngagement}
-                    onDismiss={() => setEngagementIndex((i) => i + 1)}
+              <React.Fragment key={job.id}>
+                <Animated.View
+                  entering={FadeIn.delay(Math.min(index, 5) * 50).duration(150)}
+                  style={index > 0 ? styles.cardGap : undefined}
+                >
+                  <JobCard
+                    variant="horizontal"
+                    title={job.title}
+                    company={job.company}
+                    location={job.distance}
+                    hourlyRate={job.salary}
+                    rating={job.rating}
+                    reviewCount={job.reviewCount}
+                    image={job.image}
+                    isBookmarked={bookmarks[job.id] ?? job.isBookmarked}
+                    onBookmark={() => toggleBookmark(job.id)}
+                    onPress={() => handleJobPress(job.id)}
+                    badge={job.contractType}
                   />
-                </View>
-              )}
-            </React.Fragment>
+                </Animated.View>
+              </React.Fragment>
             ))}
-            {/* See more button */}
             {hasMoreVacancies && (
-              <Pressable
-                style={styles.seeMoreBtn}
-                onPress={() => setVisibleVacancyCount((c) => c + 10)}
-              >
-                <Text style={styles.seeMoreText}>
-                  See {Math.min(remainingVacancies, 10)} more jobs
-                </Text>
+              <Pressable style={styles.seeMoreBtn} onPress={() => setVisibleVacancyCount((c) => c + 10)}>
+                <Text style={styles.seeMoreText}>show {Math.min(remainingVacancies, 10)} more results</Text>
               </Pressable>
             )}
           </Animated.View>
         )}
+
+        {/* ── FAVORIETE WERKGEVERS ── */}
+        <View style={[styles.sectionHeader, { marginTop: spacing.xl }]}>
+          <Text style={styles.sectionTitle}>Favoriete werkgevers</Text>
+          <Pressable><Text style={styles.seeAll}>Alles zien</Text></Pressable>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.employerScrollContent}
+        >
+          {EMPLOYERS.map((emp) => (
+            <EmployerCard key={emp.name} {...emp} />
+          ))}
+        </ScrollView>
 
         <View style={{ height: 40 }} />
       </ScrollView>
 
       {/* ── FILTER BOTTOM SHEET ── */}
-      <FilterBottomSheet
-        visible={filterVisible}
-        onClose={() => setFilterVisible(false)}
-      />
+      <FilterBottomSheet visible={filterVisible} onClose={() => setFilterVisible(false)} />
     </SafeAreaView>
   );
 }
@@ -1323,70 +1676,64 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     overflow: 'hidden',
   },
+
+  // ── Header ──────────────────────────────────────────────
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.m,
     paddingTop: spacing.m,
-    paddingBottom: spacing.xs,
-    gap: spacing.l,
+    paddingBottom: spacing.s,
   },
-  headerLeft: {
+  headerGreeting: {
     flex: 1,
   },
-  greeting: {
-    ...typography.h3,
-  },
-  subtitle: {
-    ...typography.bodySmall,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontFamily: fontFamilies.semibold,
+  salute: {
+    fontFamily: fontFamilies.regular,
     fontSize: typeScale.sm.fontSize,
-    color: colors.white,
+    lineHeight: typeScale.sm.lineHeight,
+    color: colors.textMuted,
+    marginBottom: 2,
   },
-  notificationBtn: {
-    width: 48,
-    height: 48,
+  greeting: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale['2xl'].fontSize,
+    lineHeight: typeScale['2xl'].lineHeight,
+    color: colors.primaryContrast,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    alignItems: 'center',
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    backgroundColor: colors.white,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: '#F7F8FA',
   },
   notificationDot: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.destructive,
+    top: 8,
+    right: 8,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors.background,
   },
+
+  // ── Search ───────────────────────────────────────────────
   searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: spacing.m,
-    paddingVertical: spacing.m,
-    gap: spacing.s,
+    paddingVertical: spacing.s,
   },
   searchInputWrap: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     height: 48,
@@ -1396,24 +1743,29 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 1,
     borderColor: colors.input,
+    ...shadows.card,
   },
   searchPlaceholder: {
     flex: 1,
     ...typography.body,
     color: colors.textMuted,
   },
-  filterIconBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.input,
-    backgroundColor: colors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
+  filterBadge: {
+    backgroundColor: colors.tertiary,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.s,
+    paddingVertical: 6,
   },
+  filterBadgeText: {
+    fontFamily: fontFamilies.semibold,
+    fontSize: typeScale.xs.fontSize,
+    lineHeight: typeScale.xs.lineHeight,
+    color: colors.primary,
+  },
+
+  // ── Sticky bar ───────────────────────────────────────────
   stickySearchContainer: {
-    backgroundColor: Platform.OS === 'web' ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.85)',
+    backgroundColor: Platform.OS === 'web' ? 'rgba(247,245,240,0.92)' : 'rgba(247,245,240,0.90)',
     borderBottomWidth: 0.5,
     borderBottomColor: colors.input,
     zIndex: 2,
@@ -1433,6 +1785,8 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.input,
     zIndex: 1,
   },
+
+  // ── Scroll ───────────────────────────────────────────────
   scroll: {
     flex: 1,
     zIndex: 1,
@@ -1440,6 +1794,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: spacing.xxl,
   },
+
+  // ── Sections ─────────────────────────────────────────────
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1455,32 +1811,43 @@ const styles = StyleSheet.create({
     ...typography.label,
     color: colors.primary,
   },
+
+  // ── Carousel ─────────────────────────────────────────────
   carouselContent: {
     paddingHorizontal: spacing.m,
-    gap: spacing.xxl,
+    gap: 12,
   },
-  divider: {
-    paddingHorizontal: spacing.m,
-    paddingVertical: spacing.xs,
+  dots: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
   },
-  dividerLine: {
-    height: 1,
-    backgroundColor: colors.input,
+  dotActive: {
+    width: 8,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primaryContrast,
   },
+  dotInactive: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#C4C8D4',
+  },
+
+  // ── Feed header ──────────────────────────────────────────
   countRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.m,
+    paddingTop: spacing.s,
     paddingBottom: spacing.s,
   },
   countLabel: {
     ...typography.h4,
-  },
-  countActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.s,
   },
   mapBtn: {
     width: 40,
@@ -1488,6 +1855,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  // ── Feed ─────────────────────────────────────────────────
   feedContainer: {
     paddingHorizontal: spacing.m,
   },
@@ -1507,5 +1876,22 @@ const styles = StyleSheet.create({
   seeMoreText: {
     ...typography.emphasisSmall,
     color: colors.primary,
+  },
+
+  // ── Employers ────────────────────────────────────────────
+  employerScrollContent: {
+    paddingHorizontal: spacing.m,
+    gap: 10,
+    paddingBottom: 4,
+  },
+
+  // ── Legacy (unused but kept for safety) ──────────────────
+  divider: {
+    paddingHorizontal: spacing.m,
+    paddingVertical: spacing.xs,
+  },
+  dividerLine: {
+    height: 1,
+    backgroundColor: colors.input,
   },
 });
