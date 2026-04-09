@@ -15,13 +15,21 @@ import { RootNavigator } from './src/navigation';
 import { colors } from './src/tokens';
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    NotoSans_400Regular,
-    NotoSans_500Medium,
-    NotoSans_600SemiBold,
-  });
+  // On web, fonts + icons load via CSS @font-face in global.css. We pass an
+  // empty map to useFonts on web so it doesn't create FontFace objects from
+  // the Metro-bundled asset URLs — those resolve to paths that 404 on the
+  // deployed build, ending up as error-state entries in document.fonts that
+  // then poison font matching and cause all text to fall back to serif.
+  const [fontsLoaded] = useFonts(
+    Platform.OS === 'web'
+      ? {}
+      : {
+          NotoSans_400Regular,
+          NotoSans_500Medium,
+          NotoSans_600SemiBold,
+        }
+  );
 
-  // On web, fonts + icons are loaded via CSS @font-face in global.css
   // On native, wait for JS font loading to complete
   if (!fontsLoaded && Platform.OS !== 'web') {
     return (

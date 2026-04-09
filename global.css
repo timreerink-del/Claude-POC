@@ -4,25 +4,32 @@
 
 /* Noto Sans — loaded via @font-face with Google Fonts CDN TTF URLs.
    These map the expo-font family names (NotoSans_400Regular etc.)
-   to the actual Google Fonts files so both web and native use the same names. */
+   to the actual Google Fonts files so both web and native use the same names.
+
+   Weight is declared as a range (100 900) instead of a single value because
+   the Peppercorn token system discriminates weight by family name
+   (NotoSans_500Medium, NotoSans_600SemiBold), not CSS font-weight. React
+   Native Web emits `font-family: NotoSans_500Medium;` with no font-weight,
+   so the computed weight falls back to 400. Without the range, the browser
+   wouldn't find a matching face and would fall back to serif. */
 @font-face {
   font-family: 'NotoSans_400Regular';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
   src: url('https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyD9A99d.ttf') format('truetype');
 }
 @font-face {
   font-family: 'NotoSans_500Medium';
   font-style: normal;
-  font-weight: 500;
+  font-weight: 100 900;
   font-display: swap;
   src: url('https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyDPA99d.ttf') format('truetype');
 }
 @font-face {
   font-family: 'NotoSans_600SemiBold';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 100 900;
   font-display: swap;
   src: url('https://fonts.gstatic.com/s/notosans/v42/o-0mIpQlx3QUlC5A4PNB6Ryti20_6n1iPHjcz6L1SoM-jCpoiyAjBN9d.ttf') format('truetype');
 }
@@ -34,4 +41,10 @@
   font-weight: 400;
   font-display: block;
   src: url('https://cdn.jsdelivr.net/npm/@expo/vector-icons@15/build/vendor/react-native-vector-icons/Fonts/Feather.ttf') format('truetype');
+}
+
+/* Sans-serif fallback — if a @font-face ever misses (CDN outage, unknown
+   family), degrade to system sans-serif instead of browser-default serif. */
+html, body, #root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Arial, sans-serif;
 }
